@@ -74,8 +74,10 @@ const initialState = {
   revenue: 70,
   purchases: [{ packageId: "start", coins: 800, price: 70, date: today }],
   professionals: [
-    { id: crypto.randomUUID(), name: "Joao Reparos", phone: "5511999991000", category: "Reformas e reparos", city: "Sao Paulo" },
-    { id: crypto.randomUUID(), name: "Bruna Clean", phone: "5511988882000", category: "Limpeza residencial", city: "Osasco" }
+    { id: crypto.randomUUID(), name: "Joao Reparos", phone: "5511999991000", mainCategory: "Casa e manutencao", category: "Eletricista - Iluminacao", city: "Sao Paulo" },
+    { id: crypto.randomUUID(), name: "Bruna Clean", phone: "5511988882000", mainCategory: "Casa e manutencao", category: "Diarista - Limpeza recorrente", city: "Osasco" },
+    { id: crypto.randomUUID(), name: "Studio Prado Tech", phone: "5511977778888", mainCategory: "Digital e tecnologia", category: "Desenvolvedor de sistemas - Sites e sistemas", city: "Sao Paulo" },
+    { id: crypto.randomUUID(), name: "Ana Eventos", phone: "5511966667777", mainCategory: "Eventos e negocios", category: "Fotografo - Produto", city: "Guarulhos" }
   ],
   requests: [
     {
@@ -91,6 +93,7 @@ const initialState = {
       status: "open",
       unlocked: false,
       unlockedCount: 0,
+      unlocks: [],
       createdAt: today
     },
     {
@@ -106,6 +109,7 @@ const initialState = {
       status: "open",
       unlocked: false,
       unlockedCount: 0,
+      unlocks: [],
       createdAt: today
     }
   ]
@@ -217,19 +221,41 @@ function normalizeState(value) {
     wallet: Number(value.wallet || 0),
     revenue: Number(value.revenue || 0),
     purchases: Array.isArray(value.purchases) ? value.purchases : [],
-    professionals: Array.isArray(value.professionals) ? value.professionals : [],
+    professionals: Array.isArray(value.professionals) ? value.professionals.map(normalizeProfessional) : [],
     requests: Array.isArray(value.requests) ? value.requests.map(normalizeRequest) : []
   };
 }
 
+function normalizeProfessional(professional) {
+  return {
+    id: professional.id || crypto.randomUUID(),
+    name: professional.name || "Profissional",
+    phone: professional.phone || "",
+    mainCategory: professional.mainCategory || professional.category || "Geral",
+    category: professional.category || "Servico geral",
+    city: professional.city || "Cidade nao informada"
+  };
+}
+
 function normalizeRequest(request) {
-  const unlockedCount = Number(request.unlockedCount ?? (request.unlocked ? 1 : 0));
+  const unlocks = Array.isArray(request.unlocks) ? request.unlocks : createLegacyUnlocks(request);
+  const unlockedCount = unlocks.length;
   return {
     ...request,
     serviceType: request.serviceType || "Orcamento para agora",
+    unlocks,
     unlockedCount,
     unlocked: Boolean(request.unlocked || unlockedCount > 0)
   };
+}
+
+function createLegacyUnlocks(request) {
+  const count = Number(request.unlockedCount ?? (request.unlocked ? 1 : 0));
+  if (!count) {
+    return [];
+  }
+
+  return getDemoProviders().slice(0, count).map((professional) => createUnlockRecord(request, professional));
 }
 
 function saveState() {
@@ -263,7 +289,7 @@ function renderLeads() {
       (leadFilter === "open" && !isRequestClosed(request)) ||
       (leadFilter === "unlocked" && request.unlocked);
     return matchesText && matchesFilter;
-  });
+  }).sort(sortRequestsForDisplay);
 
   if (!requests.length) {
     elements.leadList.innerHTML = '<div class="lead-card">Nenhuma oportunidade encontrada.</div>';
@@ -275,7 +301,7 @@ function renderLeads() {
     const closed = isRequestClosed(request);
     const unlockLabel = request.unlocked ? `${request.unlockedCount}/${maxUnlocksPerRequest} liberados` : `${cost} moedas`;
     return `
-      <article class="lead-card">
+      <article class="lead-card ${closed ? "closed-card" : ""}">
         <div>
           <span class="status ${request.unlocked ? "unlocked" : ""} ${closed ? "closed" : ""}">${closed ? "Encerrado" : unlockLabel}</span>
           <h3>${escapeHtml(request.category)} em ${escapeHtml(request.location)}</h3>
@@ -287,10 +313,12 @@ function renderLeads() {
             <span>${request.unlockedCount}/${maxUnlocksPerRequest} interessados</span>
           </div>
           ${request.unlocked ? `<p class="meta"><strong>Contato:</strong> ${escapeHtml(request.customerName)} · WhatsApp ${escapeHtml(request.customerPhone)}</p>` : ""}
+          ${renderInterestedProviders(request)}
         </div>
         <div class="row-actions">
           ${request.unlocked ? `<a class="primary-action" href="https://wa.me/${request.customerPhone}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
           ${closed ? "" : `<button class="primary-action" type="button" data-unlock="${request.id}">Liberar contato</button>`}
+          ${closed ? `<button class="text-button danger" type="button" data-delete-request="${request.id}">Excluir pedido</button>` : ""}
         </div>
       </article>
     `;
@@ -299,27 +327,89 @@ function renderLeads() {
   document.querySelectorAll("[data-unlock]").forEach((button) => {
     button.addEventListener("click", () => unlockLead(button.dataset.unlock));
   });
+
+  document.querySelectorAll("[data-delete-request]").forEach((button) => {
+    button.addEventListener("click", () => deleteRequest(button.dataset.deleteRequest));
+  });
 }
 
 function renderProfessionals() {
-  if (!state.professionals.length) {
+  const professionals = getProviderPool();
+  if (!professionals.length) {
     elements.professionalList.innerHTML = '<div class="professional-card">Nenhum profissional cadastrado.</div>';
     return;
   }
 
-  elements.professionalList.innerHTML = state.professionals.map((professional) => `
+  elements.professionalList.innerHTML = professionals.map((professional) => {
+    const canDelete = state.professionals.some((item) => item.id === professional.id);
+    return `
     <article class="professional-card">
       <div>
         <h3>${escapeHtml(professional.name)}</h3>
         <p class="meta">${escapeHtml(professional.mainCategory || professional.category)} · ${escapeHtml(professional.category)} · ${escapeHtml(professional.city)} · WhatsApp ${escapeHtml(professional.phone)}</p>
+        ${renderProfessionalServices(professional)}
       </div>
-      <button class="text-button danger" type="button" data-delete-professional="${professional.id}">Remover</button>
+      ${canDelete ? `<button class="text-button danger" type="button" data-delete-professional="${professional.id}">Remover</button>` : '<span class="status">Demo</span>'}
     </article>
-  `).join("");
+  `;
+  }).join("");
 
   document.querySelectorAll("[data-delete-professional]").forEach((button) => {
     button.addEventListener("click", () => deleteProfessional(button.dataset.deleteProfessional));
   });
+}
+
+function renderInterestedProviders(request) {
+  if (!request.unlocks.length) {
+    return `
+      <div class="provider-list empty">
+        <strong>Prestadores interessados</strong>
+        <p class="meta">Nenhum prestador liberou esse pedido ainda.</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="provider-list">
+      <strong>Prestadores interessados para este servico</strong>
+      ${request.unlocks.map((unlock) => `
+        <article>
+          <span>${escapeHtml(getInitials(unlock.professionalName))}</span>
+          <div>
+            <b>${escapeHtml(unlock.professionalName)}</b>
+            <small>${escapeHtml(unlock.profession)} · ${escapeHtml(unlock.city)}</small>
+            <small>WhatsApp ${escapeHtml(unlock.professionalPhone)} · liberado em ${formatDate(unlock.unlockedAt)}</small>
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderProfessionalServices(professional) {
+  const services = state.requests.flatMap((request) =>
+    request.unlocks
+      .filter((unlock) => unlock.professionalId === professional.id)
+      .map((unlock) => ({ request, unlock }))
+  );
+
+  if (!services.length) {
+    return '<p class="meta service-history-empty">Nenhum servico liberado por este prestador ainda.</p>';
+  }
+
+  return `
+    <div class="service-history">
+      <strong>Servicos liberados</strong>
+      ${services.map(({ request }) => `
+        <article>
+          <b>${escapeHtml(request.category)} · ${escapeHtml(request.serviceType)}</b>
+          <span>${escapeHtml(request.customerName)} · WhatsApp ${escapeHtml(request.customerPhone)}</span>
+          <span>${escapeHtml(request.location)} · ${currency.format(Number(request.budget))}</span>
+          <p>${escapeHtml(request.description)}</p>
+        </article>
+      `).join("")}
+    </div>
+  `;
 }
 
 function renderCoinPackages() {
@@ -340,7 +430,7 @@ function renderCoinPackages() {
 }
 
 function renderAdmin() {
-  const unlocked = state.requests.filter((request) => request.unlocked).length;
+  const unlocked = state.requests.reduce((total, request) => total + request.unlocks.length, 0);
   const avgTicket = state.purchases.length ? state.revenue / state.purchases.length : 0;
   elements.adminSummary.innerHTML = `
     <article class="admin-card">
@@ -502,6 +592,7 @@ function createRequest(event) {
     status: "open",
     unlocked: false,
     unlockedCount: 0,
+    unlocks: [],
     createdAt: today
   };
 
@@ -566,11 +657,66 @@ function unlockLead(requestId) {
     return;
   }
 
+  const professional = getNextProviderForRequest(request);
+  if (!professional) {
+    alert("Todos os prestadores disponiveis ja liberaram este pedido.");
+    return;
+  }
+
   state.wallet -= cost;
   request.unlocked = true;
-  request.unlockedCount = Number(request.unlockedCount || 0) + 1;
+  request.unlocks.push(createUnlockRecord(request, professional));
+  request.unlockedCount = request.unlocks.length;
+  if (isRequestClosed(request)) {
+    request.status = "closed";
+  }
   saveState();
   render();
+}
+
+function createUnlockRecord(request, professional) {
+  return {
+    id: crypto.randomUUID(),
+    requestId: request.id,
+    professionalId: professional.id,
+    professionalName: professional.name,
+    professionalPhone: professional.phone,
+    mainCategory: professional.mainCategory || professional.category,
+    profession: professional.category,
+    city: professional.city,
+    customerName: request.customerName,
+    customerPhone: request.customerPhone,
+    serviceCategory: request.category,
+    serviceType: request.serviceType,
+    serviceDescription: request.description,
+    location: request.location,
+    budget: request.budget,
+    unlockedAt: today
+  };
+}
+
+function getNextProviderForRequest(request) {
+  const usedIds = new Set(request.unlocks.map((unlock) => unlock.professionalId));
+  return getProviderPool().find((professional) => !usedIds.has(professional.id));
+}
+
+function getProviderPool() {
+  const providers = [...state.professionals.map(normalizeProfessional)];
+  getDemoProviders().forEach((provider) => {
+    if (!providers.some((item) => item.id === provider.id || item.phone === provider.phone)) {
+      providers.push(provider);
+    }
+  });
+  return providers;
+}
+
+function getDemoProviders() {
+  return [
+    { id: "demo-prado-tech", name: "Studio Prado Tech", phone: "5511977778888", mainCategory: "Digital e tecnologia", category: "Desenvolvedor de sistemas - Sites e sistemas", city: "Sao Paulo" },
+    { id: "demo-ana-eventos", name: "Ana Eventos", phone: "5511966667777", mainCategory: "Eventos e negocios", category: "Fotografo - Produto", city: "Guarulhos" },
+    { id: "demo-carlos-home", name: "Carlos Home Service", phone: "5511955551111", mainCategory: "Casa e manutencao", category: "Pedreiro - Reforma", city: "Santo Andre" },
+    { id: "demo-bela-care", name: "Bela Care", phone: "5511944442222", mainCategory: "Beleza, saude e aulas", category: "Cabeleireiro - Corte", city: "Osasco" }
+  ];
 }
 
 function buyPackage(packageId) {
@@ -589,6 +735,23 @@ function buyPackage(packageId) {
 
 function deleteProfessional(professionalId) {
   state.professionals = state.professionals.filter((professional) => professional.id !== professionalId);
+  saveState();
+  render();
+}
+
+function deleteRequest(requestId) {
+  const request = state.requests.find((item) => item.id === requestId);
+  if (!request || !isRequestClosed(request)) {
+    alert("Apenas pedidos encerrados podem ser excluidos pelo cliente.");
+    return;
+  }
+
+  const confirmed = confirm("Excluir este pedido encerrado da lista?");
+  if (!confirmed) {
+    return;
+  }
+
+  state.requests = state.requests.filter((item) => item.id !== requestId);
   saveState();
   render();
 }
@@ -612,7 +775,16 @@ function closeProfessionPicker(event) {
 }
 
 function isRequestClosed(request) {
-  return Number(request.unlockedCount || 0) >= maxUnlocksPerRequest;
+  return Number(request.unlocks?.length || request.unlockedCount || 0) >= maxUnlocksPerRequest || request.status === "closed";
+}
+
+function sortRequestsForDisplay(a, b) {
+  const aClosed = isRequestClosed(a);
+  const bClosed = isRequestClosed(b);
+  if (aClosed !== bClosed) {
+    return aClosed ? 1 : -1;
+  }
+  return new Date(`${b.createdAt}T12:00:00`) - new Date(`${a.createdAt}T12:00:00`);
 }
 
 function validateRequest(payload) {
@@ -702,6 +874,16 @@ function isValidPhone(phone) {
 
 function onlyDigits(value) {
   return String(value).replace(/\D/g, "");
+}
+
+function getInitials(name) {
+  return String(name)
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0] || "")
+    .join("")
+    .toUpperCase();
 }
 
 function escapeHtml(value) {
