@@ -17,6 +17,7 @@ const maxUnlocksPerRequest = 4;
 const professionCatalog = [
   {
     group: "Casa e manutencao",
+    category: "Casa e manutencao",
     items: [
       { profession: "Eletricista", areas: ["Instalacao eletrica", "Tomadas e disjuntores", "Chuveiro", "Iluminacao"] },
       { profession: "Encanador", areas: ["Vazamentos", "Desentupimento", "Instalacao hidraulica", "Caixa d'agua"] },
@@ -27,6 +28,7 @@ const professionCatalog = [
   },
   {
     group: "Digital e tecnologia",
+    category: "Digital e tecnologia",
     items: [
       { profession: "Desenvolvedor de sistemas", areas: ["Sites e sistemas", "Aplicativos", "APIs", "Automacoes"] },
       { profession: "Designer", areas: ["Identidade visual", "Social media", "UX/UI", "Criacao de logo"] },
@@ -37,6 +39,7 @@ const professionCatalog = [
   },
   {
     group: "Beleza, saude e aulas",
+    category: "Beleza, saude e aulas",
     items: [
       { profession: "Cabeleireiro", areas: ["Corte", "Coloracao", "Escova", "Tratamento"] },
       { profession: "Manicure", areas: ["Unha simples", "Alongamento", "Decoracao", "Pedicure"] },
@@ -47,6 +50,7 @@ const professionCatalog = [
   },
   {
     group: "Eventos e negocios",
+    category: "Eventos e negocios",
     items: [
       { profession: "Fotografo", areas: ["Casamento", "Aniversario", "Produto", "Ensaio"] },
       { profession: "Buffet", areas: ["Festa infantil", "Corporativo", "Coffee break", "Churrasco"] },
@@ -116,6 +120,8 @@ const elements = {
   requestForm: document.querySelector("#requestForm"),
   professionalForm: document.querySelector("#professionalForm"),
   professionPanel: document.querySelector("#professionPanel"),
+  selectedCategoryTitle: document.querySelector("#selectedCategoryTitle"),
+  selectedCategoryServices: document.querySelector("#selectedCategoryServices"),
   hourCalculator: document.querySelector("#hourCalculator"),
   projectCalculator: document.querySelector("#projectCalculator"),
   leadList: document.querySelector("#leadList"),
@@ -169,6 +175,7 @@ elements.clearData.addEventListener("click", clearDemo);
 
 render();
 renderProfessionPicker();
+renderSelectedCategory(professionCatalog[1]);
 openInitialView();
 
 function loadState() {
@@ -282,7 +289,7 @@ function renderProfessionals() {
     <article class="professional-card">
       <div>
         <h3>${escapeHtml(professional.name)}</h3>
-        <p class="meta">${escapeHtml(professional.category)} · ${escapeHtml(professional.city)} · WhatsApp ${escapeHtml(professional.phone)}</p>
+        <p class="meta">${escapeHtml(professional.mainCategory || professional.category)} · ${escapeHtml(professional.category)} · ${escapeHtml(professional.city)} · WhatsApp ${escapeHtml(professional.phone)}</p>
       </div>
       <button class="text-button danger" type="button" data-delete-professional="${professional.id}">Remover</button>
     </article>
@@ -340,7 +347,7 @@ function renderProfessionPicker() {
         <article class="profession-option">
           <strong>${escapeHtml(item.profession)}</strong>
           <div>
-            ${item.areas.map((area) => `<button type="button" data-profession="${escapeHtml(`${item.profession} - ${area}`)}">${escapeHtml(area)}</button>`).join("")}
+            ${item.areas.map((area) => `<button type="button" data-category="${escapeHtml(group.category)}" data-profession="${escapeHtml(`${item.profession} - ${area}`)}">${escapeHtml(area)}</button>`).join("")}
           </div>
         </article>
       `).join("")}
@@ -350,7 +357,37 @@ function renderProfessionPicker() {
   elements.professionPanel.querySelectorAll("[data-profession]").forEach((button) => {
     button.addEventListener("click", () => {
       document.querySelector("#professionalCategory").value = button.dataset.profession;
+      document.querySelector("#professionalMainCategory").value = button.dataset.category;
+      const selectedGroup = professionCatalog.find((group) => group.category === button.dataset.category);
+      if (selectedGroup) {
+        renderSelectedCategory(selectedGroup, button.dataset.profession);
+      }
       elements.professionPanel.classList.remove("open");
+    });
+  });
+}
+
+function renderSelectedCategory(group, selectedProfession = "") {
+  elements.selectedCategoryTitle.textContent = group.category;
+  elements.selectedCategoryServices.innerHTML = group.items.map((item) => `
+    <article class="service-cluster">
+      <strong>${escapeHtml(item.profession)}</strong>
+      <div>
+        ${item.areas.map((area) => {
+          const label = `${item.profession} - ${area}`;
+          const selected = selectedProfession === label ? "selected" : "";
+          return `<button class="${selected}" type="button" data-category-service="${escapeHtml(group.category)}" data-profession-service="${escapeHtml(label)}">${escapeHtml(area)}</button>`;
+        }).join("")}
+      </div>
+    </article>
+  `).join("");
+
+  elements.selectedCategoryServices.querySelectorAll("[data-profession-service]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelector("#professionalMainCategory").value = button.dataset.categoryService;
+      document.querySelector("#professionalCategory").value = button.dataset.professionService;
+      renderSelectedCategory(group, button.dataset.professionService);
+      switchView("profissional", true);
     });
   });
 }
@@ -410,6 +447,7 @@ function createProfessional(event) {
     id: crypto.randomUUID(),
     name: document.querySelector("#professionalName").value.trim(),
     phone: onlyDigits(document.querySelector("#professionalPhone").value),
+    mainCategory: document.querySelector("#professionalMainCategory").value.trim(),
     category: document.querySelector("#professionalCategory").value.trim(),
     city: document.querySelector("#professionalCity").value.trim()
   };
@@ -532,7 +570,10 @@ function validateProfessional(payload) {
     return { ok: false, message: "Informe um WhatsApp valido com DDD." };
   }
   if (payload.category.length < 3) {
-    return { ok: false, message: "Informe a categoria principal." };
+    return { ok: false, message: "Escolha profissao e area de atendimento." };
+  }
+  if (payload.mainCategory.length < 3) {
+    return { ok: false, message: "Escolha uma area para preencher a categoria principal." };
   }
   if (payload.city.length < 2) {
     return { ok: false, message: "Informe a cidade de atendimento." };

@@ -275,6 +275,7 @@
         <form class="professional-form" id="professionalForm">
           <input id="professionalName" type="text" placeholder="Nome profissional ou empresa" required />
           <input id="professionalPhone" type="tel" placeholder="WhatsApp" required />
+          <input id="professionalMainCategory" type="text" placeholder="Categoria principal" readonly required />
           <div class="profession-picker">
             <input id="professionalCategory" type="text" placeholder="Clique para escolher profissao e area" readonly required />
             <div class="profession-panel" id="professionPanel" aria-label="Lista de profissoes"></div>
@@ -337,21 +338,10 @@
         <div class="service-layout">
           <article class="category-summary">
             <span>Categoria principal</span>
-            <h3>Design e Tecnologia</h3>
+            <h3 id="selectedCategoryTitle">Digital e tecnologia</h3>
             <div class="screen-icon">&lt;/&gt;</div>
           </article>
-          <div class="service-list">
-            <button type="button">Automacao comercial</button>
-            <button type="button">Criacao de sites e sistemas</button>
-            <button type="button" class="selected">Desenvolvimento de games</button>
-            <button type="button" class="selected">Desenvolvimento de sites e sistemas</button>
-            <button type="button">Diagramador</button>
-            <button type="button">Edicao de fotos</button>
-            <button type="button">Marketing online</button>
-            <button type="button" class="selected">Servicos de TI</button>
-            <button type="button">UX e UI design</button>
-            <button type="button">Web design</button>
-          </div>
+          <div class="service-list" id="selectedCategoryServices"></div>
         </div>
       </section>
 
