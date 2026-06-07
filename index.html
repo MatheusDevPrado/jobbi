@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jobbi - Marketplace de servicos locais</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <aside class="sidebar" aria-label="Navegacao principal">
+      <a class="brand" href="#inicio" aria-label="Jobbi">
+        <span class="brand-mark">J</span>
+        <span>
+          <strong>Jobbi</strong>
+          <small>Pediu servico? Chama no Jobbi.</small>
+        </span>
+      </a>
+
+      <nav class="nav" aria-label="Secoes">
+        <button class="nav-button active" data-view="inicio" type="button">
+          <span class="icon">⌂</span>
+          <span>Inicio</span>
+        </button>
+        <button class="nav-button" data-view="pedir" type="button">
+          <span class="icon">+</span>
+          <span>Pedir servico</span>
+        </button>
+        <button class="nav-button" data-view="leads" type="button">
+          <span class="icon">◆</span>
+          <span>Oportunidades</span>
+        </button>
+        <button class="nav-button" data-view="profissional" type="button">
+          <span class="icon">●</span>
+          <span>Profissional</span>
+        </button>
+        <button class="nav-button" data-view="moedas" type="button">
+          <span class="icon">$</span>
+          <span>Moedas</span>
+        </button>
+        <button class="nav-button" data-view="admin" type="button">
+          <span class="icon">↗</span>
+          <span>Admin</span>
+        </button>
+      </nav>
+
+      <div class="wallet-card">
+        <span>Saldo demo</span>
+        <strong id="walletBalance">0 moedas</strong>
+        <p>Profissionais usam moedas para liberar contatos de clientes.</p>
+      </div>
+    </aside>
+
+    <main class="shell">
+      <section class="hero view active" id="inicio">
+        <div class="hero-copy">
+          <p class="eyebrow">Marketplace de servicos locais</p>
+          <h1>Clientes pedem servico. Profissionais compram moedas para acessar oportunidades.</h1>
+          <p class="lead">Jobbi conecta pessoas que precisam resolver algo com profissionais prontos para atender, sem copiar marcas ou visual de concorrentes.</p>
+          <div class="hero-actions">
+            <button class="primary-action" data-jump="pedir" type="button">Pedir um servico</button>
+            <button class="secondary-action" data-jump="profissional" type="button">Sou profissional</button>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <span>Modelo de monetizacao</span>
+          <strong>Moedas por lead</strong>
+          <p>O cliente pede gratis. O profissional usa moedas para desbloquear telefone e WhatsApp.</p>
+          <div class="mini-stats">
+            <span>800 moedas<br /><b>R$ 70</b></span>
+            <span>1.400 moedas<br /><b>R$ 110</b></span>
+            <span>2.200 moedas<br /><b>R$ 150</b></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Resumo">
+        <article class="metric">
+          <span>Pedidos</span>
+          <strong id="requestCount">0</strong>
+          <small>servicos solicitados</small>
+        </article>
+        <article class="metric">
+          <span>Disponiveis</span>
+          <strong id="openLeadCount">0</strong>
+          <small>oportunidades abertas</small>
+        </article>
+        <article class="metric">
+          <span>Profissionais</span>
+          <strong id="professionalCount">0</strong>
+          <small>cadastrados</small>
+        </article>
+        <article class="metric">
+          <span>Receita demo</span>
+          <strong id="revenueTotal">R$ 0</strong>
+          <small>pacotes vendidos</small>
+        </article>
+      </section>
+
+      <section class="view" id="pedir">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Cliente</p>
+            <h2>Pedir um servico</h2>
+          </div>
+          <p class="muted">Quanto melhor o pedido, maior a chance de receber proposta boa.</p>
+        </div>
+
+        <form class="request-form" id="requestForm">
+          <label>
+            Nome
+            <input id="customerName" type="text" placeholder="Seu nome" required />
+          </label>
+          <label>
+            WhatsApp
+            <input id="customerPhone" type="tel" placeholder="11999998888" required />
+          </label>
+          <label>
+            Categoria
+            <select id="requestCategory" required>
+              <option value="">Selecione</option>
+              <option>Reformas e reparos</option>
+              <option>Limpeza residencial</option>
+              <option>Beleza e bem-estar</option>
+              <option>Tecnologia</option>
+              <option>Eventos</option>
+              <option>Aulas particulares</option>
+            </select>
+          </label>
+          <label>
+            Cidade/bairro
+            <input id="requestLocation" type="text" placeholder="Sao Paulo - Tatuape" required />
+          </label>
+          <label>
+            Urgencia
+            <select id="requestUrgency" required>
+              <option value="normal">Normal</option>
+              <option value="today">Hoje</option>
+              <option value="week">Esta semana</option>
+            </select>
+          </label>
+          <label>
+            Orcamento estimado
+            <input id="requestBudget" type="number" min="50" step="10" placeholder="300" required />
+          </label>
+          <label class="full">
+            Descricao do servico
+            <textarea id="requestDescription" placeholder="Descreva o que precisa, prazo e detalhes importantes" required></textarea>
+          </label>
+          <button class="primary-action full" type="submit">Publicar pedido</button>
+        </form>
+      </section>
+
+      <section class="view" id="leads">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Profissional</p>
+            <h2>Oportunidades disponiveis</h2>
+          </div>
+          <div class="filters">
+            <input id="leadSearch" type="search" placeholder="Buscar categoria ou local" />
+            <select id="leadFilter">
+              <option value="all">Todas</option>
+              <option value="open">Disponiveis</option>
+              <option value="unlocked">Liberadas</option>
+            </select>
+          </div>
+        </div>
+        <div class="lead-list" id="leadList"></div>
+      </section>
+
+      <section class="view" id="profissional">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Cadastro</p>
+            <h2>Area do profissional</h2>
+          </div>
+          <p class="muted">Cadastre profissionais para receber oportunidades por categoria e cidade.</p>
+        </div>
+
+        <form class="professional-form" id="professionalForm">
+          <input id="professionalName" type="text" placeholder="Nome profissional ou empresa" required />
+          <input id="professionalPhone" type="tel" placeholder="WhatsApp" required />
+          <input id="professionalCategory" type="text" placeholder="Categoria principal" required />
+          <input id="professionalCity" type="text" placeholder="Cidade de atendimento" required />
+          <button class="primary-action" type="submit">Cadastrar profissional</button>
+        </form>
+        <div class="professional-list" id="professionalList"></div>
+      </section>
+
+      <section class="view" id="moedas">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Monetizacao</p>
+            <h2>Pacotes de moedas</h2>
+          </div>
+          <p class="muted">Versao demo: os botoes simulam compra e aumentam o saldo.</p>
+        </div>
+        <div class="pricing-grid" id="coinPackages"></div>
+      </section>
+
+      <section class="view" id="admin">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Gestao</p>
+            <h2>Painel admin</h2>
+          </div>
+          <button class="secondary-action danger" id="clearData" type="button">Limpar demo</button>
+        </div>
+        <div class="admin-grid" id="adminSummary"></div>
+      </section>
+
+      <footer class="footer">
+        <strong>Jobbi</strong>
+        <span>Marketplace original criado por MatheusDevPrado</span>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
