@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap");
 
 :root {
   --bg: #eef4ff;
@@ -32,7 +32,7 @@ body {
     radial-gradient(circle at 88% 0%, rgba(16, 185, 129, 0.16), transparent 30%),
     var(--bg);
   color: var(--ink);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Manrope, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   display: grid;
   grid-template-columns: 280px 1fr;
 }
@@ -76,7 +76,7 @@ button {
   border-radius: 12px;
   background: var(--brand-gradient);
   color: #ffffff;
-  font-weight: 950;
+  font-weight: 800;
   font-size: 1.4rem;
 }
 
@@ -138,7 +138,7 @@ button {
   color: var(--primary);
   font-size: 0.75rem;
   text-transform: uppercase;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0;
 }
 
@@ -198,9 +198,10 @@ button {
   max-width: 860px;
   margin: 8px 0 14px;
   font-size: clamp(2.2rem, 5vw, 4.8rem);
-  line-height: 0.98;
+  line-height: 1.04;
   letter-spacing: 0;
-  font-family: Poppins, Inter, sans-serif;
+  font-family: Manrope, ui-sans-serif, sans-serif;
+  font-weight: 800;
 }
 
 .lead {
@@ -229,7 +230,7 @@ button {
 
 .hero-panel span {
   color: var(--lime);
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .hero-panel strong {
@@ -262,7 +263,7 @@ button {
   border-radius: var(--radius);
   border: 0;
   padding: 0 16px;
-  font-weight: 850;
+  font-weight: 800;
 }
 
 .primary-action {
@@ -324,7 +325,7 @@ button {
   border-radius: 8px;
   background: var(--brand-gradient);
   color: #ffffff;
-  font-weight: 950;
+  font-weight: 800;
   margin-bottom: 12px;
 }
 
@@ -356,7 +357,7 @@ button {
   border-radius: var(--radius);
   background: #f8fafc;
   color: var(--ink);
-  font-weight: 850;
+  font-weight: 750;
   padding: 0 12px;
 }
 
@@ -411,7 +412,7 @@ h3,
 .brand strong,
 .metric strong,
 .price-card strong {
-  font-family: Poppins, Inter, sans-serif;
+  font-family: Manrope, ui-sans-serif, sans-serif;
   letter-spacing: 0;
 }
 
@@ -513,7 +514,7 @@ textarea {
   color: #1d4ed8;
   padding: 7px 10px;
   font-size: 0.82rem;
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .status.unlocked {
@@ -575,7 +576,7 @@ textarea {
   border-radius: 18px;
   background: var(--brand-gradient);
   color: #ffffff;
-  font-weight: 950;
+  font-weight: 800;
   font-size: 1.15rem;
 }
 
@@ -584,7 +585,7 @@ textarea {
   height: 112px;
   border-radius: 50%;
   margin: 0 auto 14px;
-  font-size: 1.8rem;
+  font-size: 1.7rem;
 }
 
 .pro-hero h2,
@@ -652,7 +653,8 @@ textarea {
 .profession-group h4 {
   margin: 0;
   color: var(--primary-dark);
-  font-family: Poppins, Inter, sans-serif;
+  font-family: Manrope, ui-sans-serif, sans-serif;
+  font-weight: 800;
 }
 
 .profession-option {
@@ -680,7 +682,7 @@ textarea {
   color: var(--ink);
   padding: 8px 10px;
   font-size: 0.82rem;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .profession-option button:hover {
@@ -716,7 +718,7 @@ textarea {
 .rating {
   margin: 14px 0;
   color: #ad7800;
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .info-card {
@@ -738,7 +740,7 @@ textarea {
   background: linear-gradient(135deg, #dff8ff, #e7f9f0);
   color: #075985;
   padding: 8px 12px;
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .warning-card {
@@ -759,11 +761,11 @@ textarea {
 
 .category-summary span {
   color: var(--muted);
-  font-weight: 850;
+  font-weight: 700;
 }
 
 .category-summary h3 {
-  font-size: 1.8rem;
+  font-size: 1.65rem;
   margin: 10px 0 18px;
 }
 
@@ -776,7 +778,7 @@ textarea {
   border: 2px solid var(--ink);
   box-shadow: 12px 8px 0 var(--soft-green);
   font-size: 1.5rem;
-  font-weight: 950;
+  font-weight: 800;
 }
 
 .service-list button {
@@ -786,7 +788,7 @@ textarea {
   background: #ffffff;
   text-align: left;
   padding: 0 18px;
-  font-weight: 900;
+  font-weight: 800;
   color: var(--ink);
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
@@ -807,13 +809,13 @@ textarea {
 }
 
 .price-card strong {
-  font-size: 2.2rem;
+  font-size: 2rem;
 }
 
 .installment {
   margin: 0;
   color: var(--ink);
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .price-card button {
@@ -852,7 +854,7 @@ textarea {
   place-items: center;
   background: #ffffff;
   color: var(--primary);
-  font-weight: 950;
+  font-weight: 800;
   text-align: center;
 }
 
@@ -876,7 +878,7 @@ textarea {
   background: #eef6ff;
   color: var(--primary);
   font-size: 2rem;
-  font-weight: 950;
+  font-weight: 800;
   text-align: center;
 }
 
