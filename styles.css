@@ -655,6 +655,9 @@ textarea {
   color: var(--primary-dark);
   font-family: Manrope, ui-sans-serif, sans-serif;
   font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .profession-option {
@@ -759,6 +762,61 @@ textarea {
   align-self: start;
 }
 
+.category-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #ffffff;
+  background: var(--brand-gradient);
+  box-shadow: 0 10px 24px rgba(22, 119, 255, 0.18);
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.category-icon svg {
+  width: 58%;
+  height: 58%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.category-icon.large {
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 16px;
+  border-radius: 24px;
+}
+
+.category-icon.mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  margin-right: 8px;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.category-icon.home {
+  background: linear-gradient(135deg, #0ea5e9, #22c55e);
+}
+
+.category-icon.tech {
+  background: linear-gradient(135deg, #1677ff, #06b6d4);
+}
+
+.category-icon.wellness {
+  background: linear-gradient(135deg, #10b981, #65d9a5);
+}
+
+.category-icon.business {
+  background: linear-gradient(135deg, #0757c8, #19c37d);
+}
+
 .category-summary span {
   color: var(--muted);
   font-weight: 700;
@@ -790,7 +848,8 @@ textarea {
 }
 
 .service-cluster strong {
-  display: block;
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
 }
 

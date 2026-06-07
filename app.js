@@ -18,6 +18,8 @@ const professionCatalog = [
   {
     group: "Casa e manutencao",
     category: "Casa e manutencao",
+    icon: "home",
+    tone: "home",
     items: [
       { profession: "Eletricista", areas: ["Instalacao eletrica", "Tomadas e disjuntores", "Chuveiro", "Iluminacao"] },
       { profession: "Encanador", areas: ["Vazamentos", "Desentupimento", "Instalacao hidraulica", "Caixa d'agua"] },
@@ -29,6 +31,8 @@ const professionCatalog = [
   {
     group: "Digital e tecnologia",
     category: "Digital e tecnologia",
+    icon: "code",
+    tone: "tech",
     items: [
       { profession: "Desenvolvedor de sistemas", areas: ["Sites e sistemas", "Aplicativos", "APIs", "Automacoes"] },
       { profession: "Designer", areas: ["Identidade visual", "Social media", "UX/UI", "Criacao de logo"] },
@@ -40,6 +44,8 @@ const professionCatalog = [
   {
     group: "Beleza, saude e aulas",
     category: "Beleza, saude e aulas",
+    icon: "spark",
+    tone: "wellness",
     items: [
       { profession: "Cabeleireiro", areas: ["Corte", "Coloracao", "Escova", "Tratamento"] },
       { profession: "Manicure", areas: ["Unha simples", "Alongamento", "Decoracao", "Pedicure"] },
@@ -51,6 +57,8 @@ const professionCatalog = [
   {
     group: "Eventos e negocios",
     category: "Eventos e negocios",
+    icon: "briefcase",
+    tone: "business",
     items: [
       { profession: "Fotografo", areas: ["Casamento", "Aniversario", "Produto", "Ensaio"] },
       { profession: "Buffet", areas: ["Festa infantil", "Corporativo", "Coffee break", "Churrasco"] },
@@ -120,6 +128,7 @@ const elements = {
   requestForm: document.querySelector("#requestForm"),
   professionalForm: document.querySelector("#professionalForm"),
   professionPanel: document.querySelector("#professionPanel"),
+  selectedCategoryIcon: document.querySelector("#selectedCategoryIcon"),
   selectedCategoryTitle: document.querySelector("#selectedCategoryTitle"),
   selectedCategoryServices: document.querySelector("#selectedCategoryServices"),
   hourCalculator: document.querySelector("#hourCalculator"),
@@ -342,7 +351,7 @@ function renderAdmin() {
 function renderProfessionPicker() {
   elements.professionPanel.innerHTML = professionCatalog.map((group) => `
     <section class="profession-group">
-      <h4>${escapeHtml(group.group)}</h4>
+      <h4>${categoryIconMarkup(group)}${escapeHtml(group.group)}</h4>
       ${group.items.map((item) => `
         <article class="profession-option">
           <strong>${escapeHtml(item.profession)}</strong>
@@ -368,10 +377,12 @@ function renderProfessionPicker() {
 }
 
 function renderSelectedCategory(group, selectedProfession = "") {
+  elements.selectedCategoryIcon.className = `category-icon large ${group.tone}`;
+  elements.selectedCategoryIcon.innerHTML = categoryIconSvg(group.icon);
   elements.selectedCategoryTitle.textContent = group.category;
   elements.selectedCategoryServices.innerHTML = group.items.map((item) => `
     <article class="service-cluster">
-      <strong>${escapeHtml(item.profession)}</strong>
+      <strong>${categoryIconMarkup(group, "mini")}${escapeHtml(item.profession)}</strong>
       <div>
         ${item.areas.map((area) => {
           const label = `${item.profession} - ${area}`;
@@ -390,6 +401,20 @@ function renderSelectedCategory(group, selectedProfession = "") {
       switchView("profissional", true);
     });
   });
+}
+
+function categoryIconMarkup(group, size = "") {
+  return `<span class="category-icon ${size} ${escapeHtml(group.tone)}" aria-hidden="true">${categoryIconSvg(group.icon)}</span>`;
+}
+
+function categoryIconSvg(icon) {
+  const icons = {
+    home: '<svg viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10.5V20h11v-9.5"/><path d="M10 20v-5h4v5"/></svg>',
+    code: '<svg viewBox="0 0 24 24"><path d="m9 8-4 4 4 4"/><path d="m15 8 4 4-4 4"/><path d="m13 6-2 12"/></svg>',
+    spark: '<svg viewBox="0 0 24 24"><path d="M12 3l1.7 5.1L19 10l-5.3 1.9L12 17l-1.7-5.1L5 10l5.3-1.9L12 3Z"/><path d="M18 15l.7 2.1L21 18l-2.3.9L18 21l-.7-2.1L15 18l2.3-.9L18 15Z"/></svg>',
+    briefcase: '<svg viewBox="0 0 24 24"><path d="M8 8V6.5C8 5.7 8.7 5 9.5 5h5c.8 0 1.5.7 1.5 1.5V8"/><path d="M5 8h14v11H5z"/><path d="M5 12h14"/><path d="M10 12v2h4v-2"/></svg>'
+  };
+  return icons[icon] || icons.code;
 }
 
 function renderCalculator() {
