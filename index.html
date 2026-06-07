@@ -275,7 +275,7 @@
         <form class="professional-form" id="professionalForm">
           <input id="professionalName" type="text" placeholder="Nome profissional ou empresa" required />
           <input id="professionalPhone" type="tel" placeholder="WhatsApp" required />
-          <input id="professionalMainCategory" type="text" placeholder="Categoria principal" readonly required />
+          <input id="professionalMainCategory" type="hidden" />
           <div class="profession-picker">
             <input id="professionalCategory" type="text" placeholder="Clique para escolher profissao e area" readonly required />
             <div class="profession-panel" id="professionPanel" aria-label="Lista de profissoes"></div>
@@ -289,7 +289,11 @@
       <section class="view" id="perfil">
         <div class="profile-layout">
           <aside class="profile-card">
-            <div class="avatar large">MP</div>
+            <label class="photo-uploader" aria-label="Adicionar foto de perfil">
+              <input id="profilePhotoInput" type="file" accept="image/*" />
+              <span class="avatar large" id="profileAvatar">MP</span>
+              <span class="photo-action">Adicionar foto</span>
+            </label>
             <h2>Matheus Prado Silva</h2>
             <p>Desenvolvedor Full Stack Web</p>
             <div class="rating">★★★★★ Premium</div>
@@ -306,6 +310,16 @@
               <h3>Meu anuncio</h3>
               <p><strong>Titulo:</strong> Desenvolvedor de sistemas</p>
               <p>Crio sites, sistemas, paineis administrativos, automacoes e integracoes com pagamento, WhatsApp, banco de dados e APIs.</p>
+            </article>
+            <article class="info-card profile-category-card">
+              <h3>Categoria e profissao</h3>
+              <div class="profile-category-display">
+                <span class="category-icon mini tech" id="profileCategoryIcon" aria-hidden="true"></span>
+                <div>
+                  <strong id="profileMainCategory">Digital e tecnologia</strong>
+                  <p id="profileProfession">Desenvolvedor de sistemas - Sites e sistemas</p>
+                </div>
+              </div>
             </article>
             <article class="info-card">
               <h3>Habilidades</h3>

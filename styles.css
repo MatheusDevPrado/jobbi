@@ -705,6 +705,35 @@ textarea {
   align-self: start;
 }
 
+.photo-uploader {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.photo-uploader input {
+  display: none;
+}
+
+.photo-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border-radius: 999px;
+  background: #eef6ff;
+  color: var(--primary);
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.avatar.has-photo {
+  background-size: cover;
+  background-position: center;
+}
+
 .profile-card h2 {
   margin-bottom: 6px;
 }
@@ -730,6 +759,26 @@ textarea {
 
 .info-card p:last-child {
   margin-bottom: 0;
+}
+
+.profile-category-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--radius);
+  background: #f8fbff;
+  border: 1px solid var(--line);
+  padding: 12px;
+}
+
+.profile-category-display strong,
+.profile-category-display p {
+  margin: 0;
+}
+
+.profile-category-display p {
+  color: var(--muted);
+  margin-top: 2px;
 }
 
 .chip-list {

@@ -114,6 +114,12 @@ const initialState = {
 let state = loadState();
 let leadSearch = "";
 let leadFilter = "all";
+let profileSelection = {
+  mainCategory: "Digital e tecnologia",
+  profession: "Desenvolvedor de sistemas - Sites e sistemas",
+  tone: "tech",
+  icon: "code"
+};
 
 const currency = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -131,6 +137,11 @@ const elements = {
   selectedCategoryIcon: document.querySelector("#selectedCategoryIcon"),
   selectedCategoryTitle: document.querySelector("#selectedCategoryTitle"),
   selectedCategoryServices: document.querySelector("#selectedCategoryServices"),
+  profileAvatar: document.querySelector("#profileAvatar"),
+  profilePhotoInput: document.querySelector("#profilePhotoInput"),
+  profileCategoryIcon: document.querySelector("#profileCategoryIcon"),
+  profileMainCategory: document.querySelector("#profileMainCategory"),
+  profileProfession: document.querySelector("#profileProfession"),
   hourCalculator: document.querySelector("#hourCalculator"),
   projectCalculator: document.querySelector("#projectCalculator"),
   leadList: document.querySelector("#leadList"),
@@ -169,6 +180,7 @@ elements.professionalForm.addEventListener("submit", createProfessional);
 document.querySelector("#professionalCategory").addEventListener("click", () => {
   elements.professionPanel.classList.toggle("open");
 });
+elements.profilePhotoInput.addEventListener("change", updateProfilePhoto);
 document.addEventListener("click", closeProfessionPicker);
 elements.hourCalculator.addEventListener("input", renderCalculator);
 elements.projectCalculator.addEventListener("input", renderCalculator);
@@ -231,6 +243,7 @@ function render() {
   renderCoinPackages();
   renderAdmin();
   renderCalculator();
+  renderProfileCategory();
 }
 
 function renderMetrics() {
@@ -369,6 +382,7 @@ function renderProfessionPicker() {
       document.querySelector("#professionalMainCategory").value = button.dataset.category;
       const selectedGroup = professionCatalog.find((group) => group.category === button.dataset.category);
       if (selectedGroup) {
+        updateProfileSelection(selectedGroup, button.dataset.profession);
         renderSelectedCategory(selectedGroup, button.dataset.profession);
       }
       elements.professionPanel.classList.remove("open");
@@ -397,10 +411,49 @@ function renderSelectedCategory(group, selectedProfession = "") {
     button.addEventListener("click", () => {
       document.querySelector("#professionalMainCategory").value = button.dataset.categoryService;
       document.querySelector("#professionalCategory").value = button.dataset.professionService;
+      updateProfileSelection(group, button.dataset.professionService);
       renderSelectedCategory(group, button.dataset.professionService);
       switchView("profissional", true);
     });
   });
+}
+
+function updateProfileSelection(group, profession) {
+  profileSelection = {
+    mainCategory: group.category,
+    profession,
+    tone: group.tone,
+    icon: group.icon
+  };
+  renderProfileCategory();
+}
+
+function renderProfileCategory() {
+  elements.profileCategoryIcon.className = `category-icon mini ${profileSelection.tone}`;
+  elements.profileCategoryIcon.innerHTML = categoryIconSvg(profileSelection.icon);
+  elements.profileMainCategory.textContent = profileSelection.mainCategory;
+  elements.profileProfession.textContent = profileSelection.profession;
+}
+
+function updateProfilePhoto(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) {
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    alert("Escolha um arquivo de imagem.");
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    elements.profileAvatar.textContent = "";
+    elements.profileAvatar.style.backgroundImage = `url("${reader.result}")`;
+    elements.profileAvatar.classList.add("has-photo");
+  });
+  reader.readAsDataURL(file);
 }
 
 function categoryIconMarkup(group, size = "") {
