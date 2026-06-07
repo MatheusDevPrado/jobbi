@@ -170,12 +170,34 @@
             Categoria
             <select id="requestCategory" required>
               <option value="">Selecione</option>
-              <option>Reformas e reparos</option>
-              <option>Limpeza residencial</option>
-              <option>Beleza e bem-estar</option>
-              <option>Tecnologia</option>
-              <option>Eventos</option>
-              <option>Aulas particulares</option>
+              <optgroup label="Casa e manutencao">
+                <option>Reformas e reparos</option>
+                <option>Limpeza residencial</option>
+                <option>Jardinagem</option>
+                <option>Montagem de moveis</option>
+              </optgroup>
+              <optgroup label="Digital e negocios">
+                <option>Tecnologia</option>
+                <option>Design e tecnologia</option>
+                <option>Marketing online</option>
+                <option>Administrativo</option>
+              </optgroup>
+              <optgroup label="Pessoas e eventos">
+                <option>Beleza e bem-estar</option>
+                <option>Eventos</option>
+                <option>Aulas particulares</option>
+                <option>Saude e terapia</option>
+              </optgroup>
+            </select>
+          </label>
+          <label>
+            Tipo de servico
+            <select id="requestServiceType" required>
+              <option value="">Selecione</option>
+              <option>Orcamento para agora</option>
+              <option>Servico recorrente</option>
+              <option>Projeto completo</option>
+              <option>Consultoria ou avaliacao</option>
             </select>
           </label>
           <label>
@@ -196,7 +218,7 @@
           </label>
           <label class="full">
             Descricao do servico
-            <textarea id="requestDescription" placeholder="Descreva o que precisa, prazo e detalhes importantes" required></textarea>
+            <textarea id="requestDescription" placeholder="Descreva o que precisa, prazo, referencia, tamanho do trabalho e detalhes importantes" required></textarea>
           </label>
           <button class="primary-action full" type="submit">Publicar pedido</button>
         </form>
@@ -253,7 +275,10 @@
         <form class="professional-form" id="professionalForm">
           <input id="professionalName" type="text" placeholder="Nome profissional ou empresa" required />
           <input id="professionalPhone" type="tel" placeholder="WhatsApp" required />
-          <input id="professionalCategory" type="text" placeholder="Categoria principal" required />
+          <div class="profession-picker">
+            <input id="professionalCategory" type="text" placeholder="Clique para escolher profissao e area" readonly required />
+            <div class="profession-panel" id="professionPanel" aria-label="Lista de profissoes"></div>
+          </div>
           <input id="professionalCity" type="text" placeholder="Cidade de atendimento" required />
           <button class="primary-action" type="submit">Cadastrar profissional</button>
         </form>

@@ -14,6 +14,49 @@ const leadCosts = {
 
 const maxUnlocksPerRequest = 4;
 
+const professionCatalog = [
+  {
+    group: "Casa e manutencao",
+    items: [
+      { profession: "Eletricista", areas: ["Instalacao eletrica", "Tomadas e disjuntores", "Chuveiro", "Iluminacao"] },
+      { profession: "Encanador", areas: ["Vazamentos", "Desentupimento", "Instalacao hidraulica", "Caixa d'agua"] },
+      { profession: "Pedreiro", areas: ["Reforma", "Piso e revestimento", "Pintura", "Drywall"] },
+      { profession: "Diarista", areas: ["Faxina residencial", "Pos-obra", "Passadoria", "Limpeza recorrente"] },
+      { profession: "Montador de moveis", areas: ["Moveis planejados", "Guarda-roupa", "Cozinha", "Escritorio"] }
+    ]
+  },
+  {
+    group: "Digital e tecnologia",
+    items: [
+      { profession: "Desenvolvedor de sistemas", areas: ["Sites e sistemas", "Aplicativos", "APIs", "Automacoes"] },
+      { profession: "Designer", areas: ["Identidade visual", "Social media", "UX/UI", "Criacao de logo"] },
+      { profession: "Social media", areas: ["Calendario de conteudo", "Reels", "Anuncios", "Gestao de Instagram"] },
+      { profession: "Suporte de TI", areas: ["Computadores", "Redes", "Impressoras", "Seguranca"] },
+      { profession: "Editor de video", areas: ["Videos curtos", "Aulas", "YouTube", "Legenda"] }
+    ]
+  },
+  {
+    group: "Beleza, saude e aulas",
+    items: [
+      { profession: "Cabeleireiro", areas: ["Corte", "Coloracao", "Escova", "Tratamento"] },
+      { profession: "Manicure", areas: ["Unha simples", "Alongamento", "Decoracao", "Pedicure"] },
+      { profession: "Personal trainer", areas: ["Treino presencial", "Online", "Emagrecimento", "Hipertrofia"] },
+      { profession: "Terapeuta", areas: ["Atendimento online", "Massagem", "Bem-estar", "Terapias integrativas"] },
+      { profession: "Professor particular", areas: ["Matematica", "Ingles", "Programacao", "Reforco escolar"] }
+    ]
+  },
+  {
+    group: "Eventos e negocios",
+    items: [
+      { profession: "Fotografo", areas: ["Casamento", "Aniversario", "Produto", "Ensaio"] },
+      { profession: "Buffet", areas: ["Festa infantil", "Corporativo", "Coffee break", "Churrasco"] },
+      { profession: "Consultor financeiro", areas: ["MEI", "Precificacao", "Fluxo de caixa", "Organizacao"] },
+      { profession: "Advogado", areas: ["Contratos", "Consumidor", "Trabalhista", "Empresarial"] },
+      { profession: "Contador", areas: ["MEI", "Imposto de renda", "Abertura de empresa", "Folha de pagamento"] }
+    ]
+  }
+];
+
 const initialState = {
   wallet: 800,
   revenue: 70,
@@ -28,6 +71,7 @@ const initialState = {
       customerName: "Amanda Silva",
       customerPhone: "5511977773000",
       category: "Reformas e reparos",
+      serviceType: "Orcamento para agora",
       location: "Sao Paulo - Mooca",
       urgency: "today",
       budget: 450,
@@ -42,6 +86,7 @@ const initialState = {
       customerName: "Marcos Lima",
       customerPhone: "5511966664000",
       category: "Limpeza residencial",
+      serviceType: "Servico recorrente",
       location: "Guarulhos - Centro",
       urgency: "week",
       budget: 220,
@@ -70,6 +115,7 @@ const elements = {
   walletBalance: document.querySelector("#walletBalance"),
   requestForm: document.querySelector("#requestForm"),
   professionalForm: document.querySelector("#professionalForm"),
+  professionPanel: document.querySelector("#professionPanel"),
   hourCalculator: document.querySelector("#hourCalculator"),
   projectCalculator: document.querySelector("#projectCalculator"),
   leadList: document.querySelector("#leadList"),
@@ -105,6 +151,10 @@ document.querySelectorAll("[data-category-jump]").forEach((button) => {
 
 elements.requestForm.addEventListener("submit", createRequest);
 elements.professionalForm.addEventListener("submit", createProfessional);
+document.querySelector("#professionalCategory").addEventListener("click", () => {
+  elements.professionPanel.classList.toggle("open");
+});
+document.addEventListener("click", closeProfessionPicker);
 elements.hourCalculator.addEventListener("input", renderCalculator);
 elements.projectCalculator.addEventListener("input", renderCalculator);
 elements.leadSearch.addEventListener("input", (event) => {
@@ -118,6 +168,7 @@ elements.leadFilter.addEventListener("change", (event) => {
 elements.clearData.addEventListener("click", clearDemo);
 
 render();
+renderProfessionPicker();
 openInitialView();
 
 function loadState() {
@@ -147,6 +198,7 @@ function normalizeRequest(request) {
   const unlockedCount = Number(request.unlockedCount ?? (request.unlocked ? 1 : 0));
   return {
     ...request,
+    serviceType: request.serviceType || "Orcamento para agora",
     unlockedCount,
     unlocked: Boolean(request.unlocked || unlockedCount > 0)
   };
@@ -198,7 +250,7 @@ function renderLeads() {
         <div>
           <span class="status ${request.unlocked ? "unlocked" : ""} ${closed ? "closed" : ""}">${closed ? "Encerrado" : unlockLabel}</span>
           <h3>${escapeHtml(request.category)} em ${escapeHtml(request.location)}</h3>
-          <p class="meta">${urgencyLabel(request.urgency)} · Orcamento ${currency.format(Number(request.budget))} · ${formatDate(request.createdAt)} · expira em 48h</p>
+          <p class="meta">${urgencyLabel(request.urgency)} · ${escapeHtml(request.serviceType)} · Orcamento ${currency.format(Number(request.budget))} · ${formatDate(request.createdAt)} · expira em 48h</p>
           <p>${escapeHtml(request.description)}</p>
           <div class="lead-detail-grid">
             <span>Online</span>
@@ -280,6 +332,29 @@ function renderAdmin() {
   `;
 }
 
+function renderProfessionPicker() {
+  elements.professionPanel.innerHTML = professionCatalog.map((group) => `
+    <section class="profession-group">
+      <h4>${escapeHtml(group.group)}</h4>
+      ${group.items.map((item) => `
+        <article class="profession-option">
+          <strong>${escapeHtml(item.profession)}</strong>
+          <div>
+            ${item.areas.map((area) => `<button type="button" data-profession="${escapeHtml(`${item.profession} - ${area}`)}">${escapeHtml(area)}</button>`).join("")}
+          </div>
+        </article>
+      `).join("")}
+    </section>
+  `).join("");
+
+  elements.professionPanel.querySelectorAll("[data-profession]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelector("#professionalCategory").value = button.dataset.profession;
+      elements.professionPanel.classList.remove("open");
+    });
+  });
+}
+
 function renderCalculator() {
   const monthlyIncome = Number(document.querySelector("#monthlyIncome").value || 0);
   const hoursDay = Number(document.querySelector("#hoursDay").value || 0);
@@ -304,6 +379,7 @@ function createRequest(event) {
     customerName: document.querySelector("#customerName").value.trim(),
     customerPhone: onlyDigits(document.querySelector("#customerPhone").value),
     category: document.querySelector("#requestCategory").value,
+    serviceType: document.querySelector("#requestServiceType").value,
     location: document.querySelector("#requestLocation").value.trim(),
     urgency: document.querySelector("#requestUrgency").value,
     budget: Number(document.querySelector("#requestBudget").value),
@@ -412,6 +488,13 @@ function clearDemo() {
   render();
 }
 
+function closeProfessionPicker(event) {
+  const picker = event.target.closest(".profession-picker");
+  if (!picker) {
+    elements.professionPanel.classList.remove("open");
+  }
+}
+
 function isRequestClosed(request) {
   return Number(request.unlockedCount || 0) >= maxUnlocksPerRequest;
 }
@@ -425,6 +508,9 @@ function validateRequest(payload) {
   }
   if (!payload.category) {
     return { ok: false, message: "Selecione uma categoria." };
+  }
+  if (!payload.serviceType) {
+    return { ok: false, message: "Selecione o tipo de servico." };
   }
   if (payload.location.length < 3) {
     return { ok: false, message: "Informe cidade ou bairro." };
