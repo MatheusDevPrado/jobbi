@@ -7,6 +7,7 @@
   --primary: #246bfe;
   --primary-dark: #164cbe;
   --lime: #b8f24b;
+  --yellow: #fff35f;
   --teal: #10b981;
   --danger: #c2414b;
   --shadow: 0 18px 48px rgba(15, 23, 42, 0.11);
@@ -371,6 +372,10 @@ button {
   display: none;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .view.active {
   display: grid;
 }
@@ -425,7 +430,9 @@ textarea {
 .lead-list,
 .professional-list,
 .pricing-grid,
-.admin-grid {
+.admin-grid,
+.profile-sections,
+.service-list {
   display: grid;
   gap: 12px;
 }
@@ -442,6 +449,22 @@ textarea {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
+}
+
+.lead-detail-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.lead-detail-grid span {
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: var(--ink);
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  font-weight: 850;
 }
 
 .meta {
@@ -485,6 +508,185 @@ textarea {
   gap: 12px;
 }
 
+.pro-dashboard,
+.profile-card,
+.info-card,
+.category-summary,
+.calculator-hero,
+.calculator-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.pro-dashboard {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fff784, #ffffff 58%);
+}
+
+.pro-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  color: #ffffff;
+  font-weight: 950;
+  font-size: 1.15rem;
+}
+
+.avatar.large {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  font-size: 1.8rem;
+}
+
+.pro-hero h2,
+.pro-hero p {
+  margin-bottom: 0;
+}
+
+.pro-stats,
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pro-stats span {
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 12px 14px;
+  color: var(--muted);
+}
+
+.pro-stats strong {
+  display: block;
+  color: var(--ink);
+  font-size: 1.3rem;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.profile-card {
+  padding: 22px;
+  text-align: center;
+  align-self: start;
+}
+
+.profile-card h2 {
+  margin-bottom: 6px;
+}
+
+.profile-card p {
+  color: var(--muted);
+}
+
+.profile-card button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.rating {
+  margin: 14px 0;
+  color: #ad7800;
+  font-weight: 900;
+}
+
+.info-card {
+  padding: 18px;
+}
+
+.info-card p:last-child {
+  margin-bottom: 0;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-list span {
+  border-radius: 999px;
+  background: #dff8ff;
+  color: #075985;
+  padding: 8px 12px;
+  font-weight: 850;
+}
+
+.warning-card {
+  border-left: 5px solid var(--yellow);
+}
+
+.service-layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.category-summary {
+  padding: 22px;
+  text-align: center;
+  align-self: start;
+}
+
+.category-summary span {
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.category-summary h3 {
+  font-size: 1.8rem;
+  margin: 10px 0 18px;
+}
+
+.screen-icon {
+  width: 92px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+  border: 2px solid var(--ink);
+  box-shadow: 12px 8px 0 var(--yellow);
+  font-size: 1.5rem;
+  font-weight: 950;
+}
+
+.service-list button {
+  min-height: 68px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+  text-align: left;
+  padding: 0 18px;
+  font-weight: 900;
+  color: var(--ink);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.service-list button.selected {
+  background: var(--yellow);
+}
+
 .pricing-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -499,12 +701,74 @@ textarea {
   font-size: 2.2rem;
 }
 
+.installment {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 900;
+}
+
 .price-card button {
   align-self: end;
 }
 
 .admin-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.calculator-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #ffffff;
+}
+
+.calculator-hero .eyebrow,
+.calculator-hero p {
+  color: #e0f2fe;
+}
+
+.calculator-hero h2 {
+  margin-bottom: 8px;
+}
+
+.calculator-badge {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: var(--primary);
+  font-weight: 950;
+  text-align: center;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.calculator-card {
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.calculator-card output {
+  min-height: 88px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  background: #eef6ff;
+  color: var(--primary);
+  font-size: 2rem;
+  font-weight: 950;
+  text-align: center;
 }
 
 .footer {
@@ -557,6 +821,9 @@ textarea {
   .pricing-grid,
   .category-grid,
   .admin-grid,
+  .profile-layout,
+  .service-layout,
+  .calculator-grid,
   .lead-card,
   .professional-card {
     grid-template-columns: 1fr;
@@ -576,5 +843,17 @@ textarea {
 
   .full {
     grid-column: auto;
+  }
+
+  .pro-hero,
+  .calculator-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .calculator-badge {
+    width: 100%;
+    height: 72px;
+    border-radius: var(--radius);
   }
 }

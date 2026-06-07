@@ -66,13 +66,18 @@ const currency = new Intl.NumberFormat("pt-BR", {
 const elements = {
   navButtons: document.querySelectorAll(".nav-button"),
   views: document.querySelectorAll(".view"),
+  homeSections: document.querySelectorAll(".home-section"),
   walletBalance: document.querySelector("#walletBalance"),
   requestForm: document.querySelector("#requestForm"),
   professionalForm: document.querySelector("#professionalForm"),
+  hourCalculator: document.querySelector("#hourCalculator"),
+  projectCalculator: document.querySelector("#projectCalculator"),
   leadList: document.querySelector("#leadList"),
   professionalList: document.querySelector("#professionalList"),
   coinPackages: document.querySelector("#coinPackages"),
   adminSummary: document.querySelector("#adminSummary"),
+  hourValue: document.querySelector("#hourValue"),
+  projectValue: document.querySelector("#projectValue"),
   leadSearch: document.querySelector("#leadSearch"),
   leadFilter: document.querySelector("#leadFilter"),
   clearData: document.querySelector("#clearData"),
@@ -100,6 +105,8 @@ document.querySelectorAll("[data-category-jump]").forEach((button) => {
 
 elements.requestForm.addEventListener("submit", createRequest);
 elements.professionalForm.addEventListener("submit", createProfessional);
+elements.hourCalculator.addEventListener("input", renderCalculator);
+elements.projectCalculator.addEventListener("input", renderCalculator);
 elements.leadSearch.addEventListener("input", (event) => {
   leadSearch = event.target.value.trim().toLowerCase();
   renderLeads();
@@ -155,6 +162,7 @@ function render() {
   renderProfessionals();
   renderCoinPackages();
   renderAdmin();
+  renderCalculator();
 }
 
 function renderMetrics() {
@@ -192,6 +200,11 @@ function renderLeads() {
           <h3>${escapeHtml(request.category)} em ${escapeHtml(request.location)}</h3>
           <p class="meta">${urgencyLabel(request.urgency)} · Orcamento ${currency.format(Number(request.budget))} · ${formatDate(request.createdAt)} · expira em 48h</p>
           <p>${escapeHtml(request.description)}</p>
+          <div class="lead-detail-grid">
+            <span>Online</span>
+            <span>${urgencyLabel(request.urgency)}</span>
+            <span>${request.unlockedCount}/${maxUnlocksPerRequest} interessados</span>
+          </div>
           ${request.unlocked ? `<p class="meta"><strong>Contato:</strong> ${escapeHtml(request.customerName)} · WhatsApp ${escapeHtml(request.customerPhone)}</p>` : ""}
         </div>
         <div class="row-actions">
@@ -234,6 +247,7 @@ function renderCoinPackages() {
       <span>${item.name}</span>
       <strong>${item.coins.toLocaleString("pt-BR")} moedas</strong>
       <h3>${currency.format(item.price)}</h3>
+      <p class="installment">3x de ${currency.format(item.price / 3)} · a vista ${currency.format(item.price)}</p>
       <p class="meta">${item.description}</p>
       <button class="primary-action" type="button" data-buy="${item.id}">Comprar pacote</button>
     </article>
@@ -264,6 +278,23 @@ function renderAdmin() {
       <p class="meta">Media dos pacotes vendidos.</p>
     </article>
   `;
+}
+
+function renderCalculator() {
+  const monthlyIncome = Number(document.querySelector("#monthlyIncome").value || 0);
+  const hoursDay = Number(document.querySelector("#hoursDay").value || 0);
+  const daysWeek = Number(document.querySelector("#daysWeek").value || 0);
+  const weeksYear = Number(document.querySelector("#weeksYear").value || 0);
+  const monthlyHours = hoursDay * daysWeek * (weeksYear / 12);
+  const hourlyValue = monthlyHours > 0 ? monthlyIncome / monthlyHours : 0;
+
+  const projectHourValue = Number(document.querySelector("#projectHourValue").value || 0);
+  const projectHoursDay = Number(document.querySelector("#projectHoursDay").value || 0);
+  const projectDays = Number(document.querySelector("#projectDays").value || 0);
+  const projectValue = projectHourValue * projectHoursDay * projectDays;
+
+  elements.hourValue.textContent = `${currency.format(hourlyValue)}/hora`;
+  elements.projectValue.textContent = currency.format(projectValue);
 }
 
 function createRequest(event) {
@@ -426,6 +457,7 @@ function validateProfessional(payload) {
 function switchView(view, updateHash = false) {
   elements.navButtons.forEach((button) => button.classList.toggle("active", button.dataset.view === view));
   elements.views.forEach((item) => item.classList.toggle("active", item.id === view));
+  elements.homeSections.forEach((item) => item.classList.toggle("hidden", view !== "inicio"));
   if (updateHash) {
     history.replaceState(null, "", `#${view}`);
   }

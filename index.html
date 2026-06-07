@@ -33,9 +33,21 @@
           <span class="icon">●</span>
           <span>Profissional</span>
         </button>
+        <button class="nav-button" data-view="perfil" type="button">
+          <span class="icon">◉</span>
+          <span>Perfil</span>
+        </button>
+        <button class="nav-button" data-view="categorias" type="button">
+          <span class="icon">≡</span>
+          <span>Categorias</span>
+        </button>
         <button class="nav-button" data-view="moedas" type="button">
           <span class="icon">$</span>
           <span>Moedas</span>
+        </button>
+        <button class="nav-button" data-view="calculadora" type="button">
+          <span class="icon">%</span>
+          <span>Calculadora</span>
         </button>
         <button class="nav-button" data-view="admin" type="button">
           <span class="icon">↗</span>
@@ -73,7 +85,7 @@
         </div>
       </section>
 
-      <section class="how-it-works" aria-label="Como funciona">
+      <section class="how-it-works home-section" aria-label="Como funciona">
         <article>
           <span>1</span>
           <strong>Cliente pede orcamento</strong>
@@ -96,7 +108,7 @@
         </article>
       </section>
 
-      <section class="metrics" aria-label="Resumo">
+      <section class="metrics home-section" aria-label="Resumo">
         <article class="metric">
           <span>Pedidos</span>
           <strong id="requestCount">0</strong>
@@ -119,7 +131,7 @@
         </article>
       </section>
 
-      <section class="category-band" aria-label="Categorias populares">
+      <section class="category-band home-section" aria-label="Categorias populares">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Categorias populares</p>
@@ -209,6 +221,27 @@
       </section>
 
       <section class="view" id="profissional">
+        <div class="pro-dashboard">
+          <div class="pro-hero">
+            <div class="avatar">MP</div>
+            <div>
+              <span class="status unlocked">Perfil verificado</span>
+              <h2>Matheus Prado</h2>
+              <p>Design e Tecnologia · Desenvolvimento de sistemas</p>
+            </div>
+          </div>
+          <div class="pro-stats">
+            <span><strong>49</strong> moedas</span>
+            <span><strong>12</strong> servicos negociados</span>
+            <span><strong>2019</strong> desde abril</span>
+          </div>
+          <div class="quick-actions">
+            <button class="primary-action" data-jump="leads" type="button">Ver pedidos</button>
+            <button class="secondary-action" data-jump="moedas" type="button">Comprar moedas</button>
+            <button class="secondary-action" data-jump="perfil" type="button">Editar perfil</button>
+          </div>
+        </div>
+
         <div class="section-heading">
           <div>
             <p class="eyebrow">Cadastro</p>
@@ -227,6 +260,76 @@
         <div class="professional-list" id="professionalList"></div>
       </section>
 
+      <section class="view" id="perfil">
+        <div class="profile-layout">
+          <aside class="profile-card">
+            <div class="avatar large">MP</div>
+            <h2>Matheus Prado Silva</h2>
+            <p>Desenvolvedor Full Stack Web</p>
+            <div class="rating">★★★★★ Premium</div>
+            <button class="primary-action" type="button">Editar perfil</button>
+            <button class="secondary-action" type="button">Ver perfil publico</button>
+          </aside>
+
+          <div class="profile-sections">
+            <article class="info-card">
+              <h3>Resumo profissional</h3>
+              <p>Profissional focado em criacao de sistemas web, automacoes e solucoes digitais para pequenos negocios. Atendimento consultivo, proposta clara e acompanhamento durante a entrega.</p>
+            </article>
+            <article class="info-card">
+              <h3>Meu anuncio</h3>
+              <p><strong>Titulo:</strong> Desenvolvedor de sistemas</p>
+              <p>Crio sites, sistemas, paineis administrativos, automacoes e integracoes com pagamento, WhatsApp, banco de dados e APIs.</p>
+            </article>
+            <article class="info-card">
+              <h3>Habilidades</h3>
+              <div class="chip-list">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>React</span>
+                <span>Node.js</span>
+                <span>Banco de dados</span>
+              </div>
+            </article>
+            <article class="info-card warning-card">
+              <h3>Validacao de identidade</h3>
+              <p>Documentos pendentes para liberar selo completo: documento com foto e selfie segurando o documento.</p>
+              <button class="primary-action" type="button">Solicitar verificacao</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="categorias">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Servicos</p>
+            <h2>Escolha suas categorias de atendimento</h2>
+          </div>
+          <p class="muted">A selecao ajuda a plataforma mostrar pedidos mais relevantes para cada profissional.</p>
+        </div>
+        <div class="service-layout">
+          <article class="category-summary">
+            <span>Categoria principal</span>
+            <h3>Design e Tecnologia</h3>
+            <div class="screen-icon">&lt;/&gt;</div>
+          </article>
+          <div class="service-list">
+            <button type="button">Automacao comercial</button>
+            <button type="button">Criacao de sites e sistemas</button>
+            <button type="button" class="selected">Desenvolvimento de games</button>
+            <button type="button" class="selected">Desenvolvimento de sites e sistemas</button>
+            <button type="button">Diagramador</button>
+            <button type="button">Edicao de fotos</button>
+            <button type="button">Marketing online</button>
+            <button type="button" class="selected">Servicos de TI</button>
+            <button type="button">UX e UI design</button>
+            <button type="button">Web design</button>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="moedas">
         <div class="section-heading">
           <div>
@@ -236,6 +339,57 @@
           <p class="muted">Versao demo: os botoes simulam compra e aumentam o saldo.</p>
         </div>
         <div class="pricing-grid" id="coinPackages"></div>
+      </section>
+
+      <section class="view" id="calculadora">
+        <div class="calculator-hero">
+          <div>
+            <p class="eyebrow">Ferramenta do profissional</p>
+            <h2>Calculadora de valor/hora</h2>
+            <p>Use para descobrir quanto cobrar por hora e estimar o valor total de um projeto.</p>
+          </div>
+          <div class="calculator-badge">Jobbi Calc</div>
+        </div>
+
+        <div class="calculator-grid">
+          <form class="calculator-card" id="hourCalculator">
+            <h3>Calcule seu valor por hora</h3>
+            <label>
+              Quanto quer ganhar por mes?
+              <input id="monthlyIncome" type="number" min="0" step="100" value="10000" />
+            </label>
+            <label>
+              Horas por dia
+              <input id="hoursDay" type="number" min="1" max="24" value="8" />
+            </label>
+            <label>
+              Dias por semana
+              <input id="daysWeek" type="number" min="1" max="7" value="5" />
+            </label>
+            <label>
+              Semanas por ano
+              <input id="weeksYear" type="number" min="1" max="52" value="48" />
+            </label>
+            <output id="hourValue">R$ 0,00/hora</output>
+          </form>
+
+          <form class="calculator-card" id="projectCalculator">
+            <h3>Calcule o valor do projeto</h3>
+            <label>
+              Seu valor por hora
+              <input id="projectHourValue" type="number" min="0" step="10" value="80" />
+            </label>
+            <label>
+              Horas por dia no projeto
+              <input id="projectHoursDay" type="number" min="1" max="24" value="4" />
+            </label>
+            <label>
+              Dias de projeto
+              <input id="projectDays" type="number" min="1" value="10" />
+            </label>
+            <output id="projectValue">R$ 0,00</output>
+          </form>
+        </div>
       </section>
 
       <section class="view" id="admin">
