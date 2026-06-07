@@ -12,6 +12,8 @@ const leadCosts = {
   week: 110
 };
 
+const maxUnlocksPerRequest = 4;
+
 const initialState = {
   wallet: 800,
   revenue: 70,
@@ -32,6 +34,7 @@ const initialState = {
       description: "Preciso trocar duas tomadas e instalar uma luminaria ainda hoje.",
       status: "open",
       unlocked: false,
+      unlockedCount: 0,
       createdAt: today
     },
     {
@@ -45,6 +48,7 @@ const initialState = {
       description: "Procuro faxina completa para apartamento pequeno nesta semana.",
       status: "open",
       unlocked: false,
+      unlockedCount: 0,
       createdAt: today
     }
   ]
@@ -86,6 +90,14 @@ document.querySelectorAll("[data-jump]").forEach((button) => {
   button.addEventListener("click", () => switchView(button.dataset.jump, true));
 });
 
+document.querySelectorAll("[data-category-jump]").forEach((button) => {
+  button.addEventListener("click", () => {
+    switchView("pedir", true);
+    document.querySelector("#requestCategory").value = button.dataset.categoryJump;
+    document.querySelector("#requestLocation").focus();
+  });
+});
+
 elements.requestForm.addEventListener("submit", createRequest);
 elements.professionalForm.addEventListener("submit", createProfessional);
 elements.leadSearch.addEventListener("input", (event) => {
@@ -120,7 +132,16 @@ function normalizeState(value) {
     revenue: Number(value.revenue || 0),
     purchases: Array.isArray(value.purchases) ? value.purchases : [],
     professionals: Array.isArray(value.professionals) ? value.professionals : [],
-    requests: Array.isArray(value.requests) ? value.requests : []
+    requests: Array.isArray(value.requests) ? value.requests.map(normalizeRequest) : []
+  };
+}
+
+function normalizeRequest(request) {
+  const unlockedCount = Number(request.unlockedCount ?? (request.unlocked ? 1 : 0));
+  return {
+    ...request,
+    unlockedCount,
+    unlocked: Boolean(request.unlocked || unlockedCount > 0)
   };
 }
 
@@ -137,7 +158,7 @@ function render() {
 }
 
 function renderMetrics() {
-  const open = state.requests.filter((request) => request.status === "open" && !request.unlocked);
+  const open = state.requests.filter((request) => request.status === "open" && !isRequestClosed(request));
   elements.walletBalance.textContent = `${state.wallet} moedas`;
   elements.requestCount.textContent = state.requests.length;
   elements.openLeadCount.textContent = open.length;
@@ -150,7 +171,7 @@ function renderLeads() {
     const text = `${request.customerName} ${request.category} ${request.location} ${request.description}`.toLowerCase();
     const matchesText = !leadSearch || text.includes(leadSearch);
     const matchesFilter = leadFilter === "all" ||
-      (leadFilter === "open" && !request.unlocked) ||
+      (leadFilter === "open" && !isRequestClosed(request)) ||
       (leadFilter === "unlocked" && request.unlocked);
     return matchesText && matchesFilter;
   });
@@ -162,17 +183,20 @@ function renderLeads() {
 
   elements.leadList.innerHTML = requests.map((request) => {
     const cost = getLeadCost(request.urgency);
+    const closed = isRequestClosed(request);
+    const unlockLabel = request.unlocked ? `${request.unlockedCount}/${maxUnlocksPerRequest} liberados` : `${cost} moedas`;
     return `
       <article class="lead-card">
         <div>
-          <span class="status ${request.unlocked ? "unlocked" : ""}">${request.unlocked ? "Contato liberado" : `${cost} moedas`}</span>
+          <span class="status ${request.unlocked ? "unlocked" : ""} ${closed ? "closed" : ""}">${closed ? "Encerrado" : unlockLabel}</span>
           <h3>${escapeHtml(request.category)} em ${escapeHtml(request.location)}</h3>
-          <p class="meta">${urgencyLabel(request.urgency)} · Orcamento ${currency.format(Number(request.budget))} · ${formatDate(request.createdAt)}</p>
+          <p class="meta">${urgencyLabel(request.urgency)} · Orcamento ${currency.format(Number(request.budget))} · ${formatDate(request.createdAt)} · expira em 48h</p>
           <p>${escapeHtml(request.description)}</p>
           ${request.unlocked ? `<p class="meta"><strong>Contato:</strong> ${escapeHtml(request.customerName)} · WhatsApp ${escapeHtml(request.customerPhone)}</p>` : ""}
         </div>
         <div class="row-actions">
-          ${request.unlocked ? `<a class="primary-action" href="https://wa.me/${request.customerPhone}" target="_blank" rel="noreferrer">WhatsApp</a>` : `<button class="primary-action" type="button" data-unlock="${request.id}">Liberar contato</button>`}
+          ${request.unlocked ? `<a class="primary-action" href="https://wa.me/${request.customerPhone}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
+          ${closed ? "" : `<button class="primary-action" type="button" data-unlock="${request.id}">Liberar contato</button>`}
         </div>
       </article>
     `;
@@ -255,6 +279,7 @@ function createRequest(event) {
     description: document.querySelector("#requestDescription").value.trim(),
     status: "open",
     unlocked: false,
+    unlockedCount: 0,
     createdAt: today
   };
 
@@ -307,6 +332,11 @@ function unlockLead(requestId) {
   }
 
   const cost = getLeadCost(request.urgency);
+  if (isRequestClosed(request)) {
+    alert("Este pedido ja atingiu o limite de profissionais interessados.");
+    return;
+  }
+
   if (state.wallet < cost) {
     alert("Saldo insuficiente. Compre mais moedas para liberar este contato.");
     switchView("moedas", true);
@@ -315,6 +345,7 @@ function unlockLead(requestId) {
 
   state.wallet -= cost;
   request.unlocked = true;
+  request.unlockedCount = Number(request.unlockedCount || 0) + 1;
   saveState();
   render();
 }
@@ -348,6 +379,10 @@ function clearDemo() {
   state = structuredClone(initialState);
   saveState();
   render();
+}
+
+function isRequestClosed(request) {
+  return Number(request.unlockedCount || 0) >= maxUnlocksPerRequest;
 }
 
 function validateRequest(payload) {

@@ -277,6 +277,79 @@ button {
   margin: 24px 0;
 }
 
+.how-it-works,
+.category-band {
+  margin-top: 24px;
+}
+
+.how-it-works {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.how-it-works article,
+.category-band {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.how-it-works article {
+  padding: 16px;
+}
+
+.how-it-works span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #e8f1ff;
+  color: var(--primary);
+  font-weight: 950;
+  margin-bottom: 12px;
+}
+
+.how-it-works strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.how-it-works p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.category-band {
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.category-grid button {
+  min-height: 52px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #f8fafc;
+  color: var(--ink);
+  font-weight: 850;
+  padding: 0 12px;
+}
+
+.category-grid button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #ffffff;
+}
+
 .metric {
   padding: 18px;
   min-height: 124px;
@@ -392,6 +465,11 @@ textarea {
   color: #166534;
 }
 
+.status.closed {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .professional-form {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
@@ -472,10 +550,12 @@ textarea {
   }
 
   .hero,
+  .how-it-works,
   .metrics,
   .request-form,
   .professional-form,
   .pricing-grid,
+  .category-grid,
   .admin-grid,
   .lead-card,
   .professional-card {
