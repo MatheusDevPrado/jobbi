@@ -143,7 +143,6 @@ const elements = {
   selectedCategoryServices: document.querySelector("#selectedCategoryServices"),
   profileAvatar: document.querySelector("#profileAvatar"),
   profilePhotoInput: document.querySelector("#profilePhotoInput"),
-  profileCategoryIcon: document.querySelector("#profileCategoryIcon"),
   profileMainCategory: document.querySelector("#profileMainCategory"),
   profileProfession: document.querySelector("#profileProfession"),
   hourCalculator: document.querySelector("#hourCalculator"),
@@ -519,8 +518,6 @@ function updateProfileSelection(group, profession) {
 }
 
 function renderProfileCategory() {
-  elements.profileCategoryIcon.className = `category-icon mini ${profileSelection.tone}`;
-  elements.profileCategoryIcon.innerHTML = categoryIconSvg(profileSelection.icon);
   elements.profileMainCategory.textContent = profileSelection.mainCategory;
   elements.profileProfession.textContent = profileSelection.profession;
 }

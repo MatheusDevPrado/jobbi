@@ -37,10 +37,6 @@
           <span class="icon">◉</span>
           <span>Perfil</span>
         </button>
-        <button class="nav-button" data-view="categorias" type="button">
-          <span class="icon">≡</span>
-          <span>Categorias</span>
-        </button>
         <button class="nav-button" data-view="moedas" type="button">
           <span class="icon">$</span>
           <span>Moedas</span>
@@ -287,75 +283,103 @@
       </section>
 
       <section class="view" id="perfil">
-        <div class="profile-layout">
-          <aside class="profile-card">
+        <div class="public-profile">
+          <section class="public-profile-hero">
             <label class="photo-uploader" aria-label="Adicionar foto de perfil">
               <input id="profilePhotoInput" type="file" accept="image/*" />
               <span class="avatar large" id="profileAvatar">MP</span>
               <span class="photo-action">Adicionar foto</span>
             </label>
-            <h2>Matheus Prado Silva</h2>
-            <p>Desenvolvedor Full Stack Web</p>
-            <div class="rating">★★★★★ Premium</div>
+            <div class="public-profile-copy">
+              <span class="brand-line">Jobbi</span>
+              <h2>Matheus Prado Silva <span class="verified-badge">Verificado</span></h2>
+              <p id="profileProfession">Desenvolvedor de sistemas - Sites e sistemas</p>
+              <div class="profile-facts">
+                <span>53 servicos negociados</span>
+                <span>Cadastrado desde abril de 2019</span>
+                <span>Identidade verificada</span>
+              </div>
+            </div>
+          </section>
+
+          <nav class="profile-tabs" aria-label="Secoes do perfil">
+            <a href="#perfil-sobre">Sobre</a>
+            <a href="#perfil-conquistas">Conquistas</a>
+            <a href="#perfil-servicos">Servicos</a>
+            <a href="#perfil-dados">Dados</a>
+          </nav>
+
+          <section class="profile-section" id="perfil-sobre">
+            <h3>Sobre</h3>
+            <p>Sou um profissional focado em criar solucoes digitais claras, funcionais e bem estruturadas para pequenos negocios. Trabalho com atendimento consultivo, proposta objetiva e acompanhamento durante a entrega.</p>
+            <div class="chip-list">
+              <span>HTML</span>
+              <span>CSS</span>
+              <span>JavaScript</span>
+              <span>React</span>
+              <span>Node.js</span>
+              <span>Banco de dados</span>
+            </div>
+          </section>
+
+          <section class="profile-section" id="perfil-conquistas">
+            <h3>Conquistas</h3>
+            <div class="achievement-grid">
+              <article>
+                <span class="category-icon mini wellness" aria-hidden="true"></span>
+                <strong>Profissional verificado</strong>
+                <p>Documentacao analisada e perfil liberado para atender clientes.</p>
+              </article>
+              <article>
+                <span class="category-icon mini tech" aria-hidden="true"></span>
+                <strong>Resposta rapida</strong>
+                <p>Historico de contato rapido com clientes interessados.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="profile-section" id="perfil-servicos">
+            <div class="service-layout embedded">
+              <article class="category-summary">
+                <div class="category-icon large tech" id="selectedCategoryIcon" aria-hidden="true"></div>
+                <span>Categoria principal</span>
+                <h3 id="selectedCategoryTitle">Digital e tecnologia</h3>
+                <strong id="profileMainCategory">Digital e tecnologia</strong>
+              </article>
+              <div>
+                <h3>Servicos que atende</h3>
+                <div class="service-list" id="selectedCategoryServices"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-section" id="perfil-dados">
+            <h3>Dados pessoais</h3>
+            <div class="profile-data-grid">
+              <article>
+                <strong>Nome</strong>
+                <span>Matheus Prado Silva</span>
+              </article>
+              <article>
+                <strong>E-mail</strong>
+                <span>matheusprado@email.com</span>
+              </article>
+              <article>
+                <strong>Telefone</strong>
+                <span>(11) 96316-6266</span>
+              </article>
+              <article>
+                <strong>Endereco</strong>
+                <span>Sao Paulo, SP</span>
+              </article>
+            </div>
+            <button class="text-button danger" type="button">Excluir conta</button>
+          </section>
+
+          <div class="profile-actions-row">
             <button class="primary-action" type="button">Editar perfil</button>
-            <button class="secondary-action" type="button">Ver perfil publico</button>
-          </aside>
-
-          <div class="profile-sections">
-            <article class="info-card">
-              <h3>Resumo profissional</h3>
-              <p>Profissional focado em criacao de sistemas web, automacoes e solucoes digitais para pequenos negocios. Atendimento consultivo, proposta clara e acompanhamento durante a entrega.</p>
-            </article>
-            <article class="info-card">
-              <h3>Meu anuncio</h3>
-              <p><strong>Titulo:</strong> Desenvolvedor de sistemas</p>
-              <p>Crio sites, sistemas, paineis administrativos, automacoes e integracoes com pagamento, WhatsApp, banco de dados e APIs.</p>
-            </article>
-            <article class="info-card profile-category-card">
-              <h3>Categoria e profissao</h3>
-              <div class="profile-category-display">
-                <span class="category-icon mini tech" id="profileCategoryIcon" aria-hidden="true"></span>
-                <div>
-                  <strong id="profileMainCategory">Digital e tecnologia</strong>
-                  <p id="profileProfession">Desenvolvedor de sistemas - Sites e sistemas</p>
-                </div>
-              </div>
-            </article>
-            <article class="info-card">
-              <h3>Habilidades</h3>
-              <div class="chip-list">
-                <span>HTML</span>
-                <span>CSS</span>
-                <span>JavaScript</span>
-                <span>React</span>
-                <span>Node.js</span>
-                <span>Banco de dados</span>
-              </div>
-            </article>
-            <article class="info-card warning-card">
-              <h3>Validacao de identidade</h3>
-              <p>Documentos pendentes para liberar selo completo: documento com foto e selfie segurando o documento.</p>
-              <button class="primary-action" type="button">Solicitar verificacao</button>
-            </article>
+            <button class="secondary-action" data-jump="profissional" type="button">Editar servicos</button>
           </div>
-        </div>
-      </section>
-
-      <section class="view" id="categorias">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Servicos</p>
-            <h2>Escolha suas categorias de atendimento</h2>
-          </div>
-          <p class="muted">A selecao ajuda a plataforma mostrar pedidos mais relevantes para cada profissional.</p>
-        </div>
-        <div class="service-layout">
-          <article class="category-summary">
-            <div class="category-icon large tech" id="selectedCategoryIcon" aria-hidden="true"></div>
-            <span>Categoria principal</span>
-            <h3 id="selectedCategoryTitle">Digital e tecnologia</h3>
-          </article>
-          <div class="service-list" id="selectedCategoryServices"></div>
         </div>
       </section>
 
