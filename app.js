@@ -135,6 +135,7 @@ const elements = {
   views: document.querySelectorAll(".view"),
   homeSections: document.querySelectorAll(".home-section"),
   walletBalance: document.querySelector("#walletBalance"),
+  ordersCoinBalance: document.querySelector("#ordersCoinBalance"),
   requestForm: document.querySelector("#requestForm"),
   professionalForm: document.querySelector("#professionalForm"),
   professionPanel: document.querySelector("#professionPanel"),
@@ -274,6 +275,7 @@ function render() {
 function renderMetrics() {
   const open = state.requests.filter((request) => request.status === "open" && !isRequestClosed(request));
   elements.walletBalance.textContent = `${state.wallet} moedas`;
+  elements.ordersCoinBalance.textContent = state.wallet;
   elements.requestCount.textContent = state.requests.length;
   elements.openLeadCount.textContent = open.length;
   elements.professionalCount.textContent = state.professionals.length;
@@ -282,6 +284,9 @@ function renderMetrics() {
 
 function renderLeads() {
   const requests = state.requests.filter((request) => {
+    if (request.status === "skipped") {
+      return false;
+    }
     const text = `${request.customerName} ${request.category} ${request.location} ${request.description}`.toLowerCase();
     const matchesText = !leadSearch || text.includes(leadSearch);
     const matchesFilter = leadFilter === "all" ||
@@ -301,22 +306,45 @@ function renderLeads() {
     const unlockLabel = request.unlocked ? `${request.unlockedCount}/${maxUnlocksPerRequest} liberados` : `${cost} moedas`;
     return `
       <article class="lead-card ${closed ? "closed-card" : ""}">
-        <div>
-          <span class="status ${request.unlocked ? "unlocked" : ""} ${closed ? "closed" : ""}">${closed ? "Encerrado" : unlockLabel}</span>
-          <h3>${escapeHtml(request.category)} em ${escapeHtml(request.location)}</h3>
-          <p class="meta">${urgencyLabel(request.urgency)} · ${escapeHtml(request.serviceType)} · Orcamento ${currency.format(Number(request.budget))} · ${formatDate(request.createdAt)} · expira em 48h</p>
-          <p>${escapeHtml(request.description)}</p>
-          <div class="lead-detail-grid">
-            <span>Online</span>
-            <span>${urgencyLabel(request.urgency)}</span>
+        <div class="lead-main">
+          <div class="lead-card-top">
+            <span>${escapeHtml(request.category)}</span>
+            <strong class="status ${request.unlocked ? "unlocked" : ""} ${closed ? "closed" : ""}">${closed ? "Encerrado" : unlockLabel}</strong>
+          </div>
+          <h3>${escapeHtml(request.category)}</h3>
+          <div class="lead-summary-row">
+            <span>${escapeHtml(request.customerName)}</span>
+            <span>${request.urgency === "today" ? "Servico urgente" : "Servico online"}</span>
             <span>${request.unlockedCount}/${maxUnlocksPerRequest} interessados</span>
           </div>
-          ${request.unlocked ? `<p class="meta"><strong>Contato:</strong> ${escapeHtml(request.customerName)} · WhatsApp ${escapeHtml(request.customerPhone)}</p>` : ""}
+
+          <div class="lead-client-panel">
+            <h4>Informacoes do cliente</h4>
+            <div class="client-insights">
+              <span><b>Primeiro pedido</b><small>${formatDate(request.createdAt)}</small></span>
+              <span><b>Pedidos solicitados</b><small>1o pedido</small></span>
+              <span><b>Mais popular</b><small>${escapeHtml(request.category)}</small></span>
+            </div>
+            <dl>
+              <div><dt>Tipo</dt><dd>${escapeHtml(request.serviceType)}</dd></div>
+              <div><dt>Local</dt><dd>${escapeHtml(request.location)}</dd></div>
+              <div><dt>Prazo</dt><dd>${urgencyLabel(request.urgency)}</dd></div>
+              <div><dt>Orcamento</dt><dd>${currency.format(Number(request.budget))}</dd></div>
+              <div class="full"><dt>Informacoes adicionais</dt><dd>${escapeHtml(request.description)}</dd></div>
+            </dl>
+          </div>
+
+          ${request.unlocked ? `<p class="meta"><strong>Contato liberado:</strong> ${escapeHtml(request.customerName)} · WhatsApp ${escapeHtml(request.customerPhone)}</p>` : ""}
           ${renderInterestedProviders(request)}
+          ${renderRelatedRequests(request)}
         </div>
-        <div class="row-actions">
+
+        <div class="lead-action-bar">
+          <button class="text-button danger icon-only" type="button" ${closed ? `data-delete-request="${request.id}"` : `data-skip-request="${request.id}"`} aria-label="${closed ? "Excluir pedido" : "Ignorar pedido"}">
+            ×
+          </button>
           ${request.unlocked ? `<a class="primary-action" href="https://wa.me/${request.customerPhone}" target="_blank" rel="noreferrer">WhatsApp</a>` : ""}
-          ${closed ? "" : `<button class="primary-action" type="button" data-unlock="${request.id}">Liberar contato</button>`}
+          ${closed ? "" : `<button class="primary-action unlock-button" type="button" data-unlock="${request.id}">Liberar pedido ${cost} moedas</button>`}
           ${closed ? `<button class="text-button danger" type="button" data-delete-request="${request.id}">Excluir pedido</button>` : ""}
         </div>
       </article>
@@ -329,6 +357,10 @@ function renderLeads() {
 
   document.querySelectorAll("[data-delete-request]").forEach((button) => {
     button.addEventListener("click", () => deleteRequest(button.dataset.deleteRequest));
+  });
+
+  document.querySelectorAll("[data-skip-request]").forEach((button) => {
+    button.addEventListener("click", () => skipRequest(button.dataset.skipRequest));
   });
 }
 
@@ -407,6 +439,31 @@ function renderProfessionalServices(professional) {
           <p>${escapeHtml(request.description)}</p>
         </article>
       `).join("")}
+    </div>
+  `;
+}
+
+function renderRelatedRequests(currentRequest) {
+  const related = state.requests
+    .filter((request) => request.id !== currentRequest.id && !isRequestClosed(request))
+    .slice(0, 2);
+
+  if (!related.length) {
+    return "";
+  }
+
+  return `
+    <div class="related-requests">
+      <strong>Outros pedidos para voce</strong>
+      <div>
+        ${related.map((request) => `
+          <article>
+            <b>${escapeHtml(request.category)}</b>
+            <span>${escapeHtml(request.customerName)}</span>
+            <small>${request.unlockedCount ? "Aproveite, ja tem interessado." : "Este cliente ainda busca profissional."}</small>
+          </article>
+        `).join("")}
+      </div>
     </div>
   `;
 }
@@ -749,6 +806,17 @@ function deleteRequest(requestId) {
   }
 
   state.requests = state.requests.filter((item) => item.id !== requestId);
+  saveState();
+  render();
+}
+
+function skipRequest(requestId) {
+  const request = state.requests.find((item) => item.id === requestId);
+  if (!request) {
+    return;
+  }
+
+  request.status = "skipped";
   saveState();
   render();
 }

@@ -221,17 +221,38 @@
       </section>
 
       <section class="view" id="leads">
-        <div class="section-heading">
+        <div class="orders-app-header">
           <div>
-            <p class="eyebrow">Profissional</p>
-            <h2>Oportunidades disponiveis</h2>
+            <p class="eyebrow">Pedidos</p>
+            <h2>Disponiveis</h2>
           </div>
+          <button class="coin-pill" data-jump="moedas" type="button">
+            <span></span>
+            <strong id="ordersCoinBalance">0</strong>
+            <small>Moedas</small>
+          </button>
+        </div>
+
+        <div class="orders-location-card">
+          <div>
+            <strong>Pedidos proximos ao CEP: 09572-460</strong>
+            <p>Pedidos online aparecem para todo o Brasil. Presenciais respeitam o raio definido.</p>
+          </div>
+          <button class="text-button" type="button">Editar localizacao</button>
+        </div>
+
+        <div class="orders-tabs" aria-label="Tipos de pedido">
+          <button class="active" type="button">Disponiveis</button>
+          <button type="button">Cliente direto</button>
+        </div>
+
+        <div class="section-heading compact">
           <div class="filters">
-            <input id="leadSearch" type="search" placeholder="Buscar categoria ou local" />
+            <input id="leadSearch" type="search" placeholder="Buscar categoria, cliente ou local" />
             <select id="leadFilter">
-              <option value="all">Todas</option>
+              <option value="all">Todos</option>
               <option value="open">Disponiveis</option>
-              <option value="unlocked">Liberadas</option>
+              <option value="unlocked">Liberados</option>
             </select>
           </div>
         </div>
